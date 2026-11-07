@@ -1,6 +1,10 @@
 {
   "version": 1,
   "entries": {
+    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
+      "last_emitted_at_ms": 1794034005615,
+      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
+    },
     "445ed27a3872b681d98190bae61ccb84954e1bc4e140df5370be958dee776b3a": {
       "last_emitted_at_ms": 1794033884246,
       "message": "Verify changes work after editing. Test functionality before marking complete."
@@ -12,11 +16,7 @@
     "94d40c4671572fb5249bd450bf8d31f5fb9efba318ca34991409df82aa663609": {
       "last_emitted_at_ms": 1794033710959,
       "message": "Spawning agent: oh-my-claudecode:code-reviewer (inherit) | Task: stock-call MVP 코드 리뷰"
-    },
-    "79a93d4a2f8f50b95f852280616242fee1855dc99a3c75211917f55e72e95fae": {
-      "last_emitted_at_ms": 1794033655926,
-      "message": "Use parallel execution for independent tasks. Use run_in_background for long operations (npm install, builds, tests)."
     }
   },
-  "updated_at": "2026-11-07T06:44:44.246Z"
+  "updated_at": "2026-11-07T06:46:45.615Z"
 }

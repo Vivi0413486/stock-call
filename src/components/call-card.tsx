@@ -93,7 +93,7 @@ export function CallCard({ record: r, onAgain, onHome }: Props) {
               {r.brief.disclosures.map((d, i) => (
                 <li key={i} className="flex gap-2">
                   <span className="shrink-0 font-mono text-xs text-muted">{fmtDateKo(d.filedDate)}</span>
-                  {d.url ? (
+                  {d.url && /^https?:\/\//.test(d.url) ? (
                     <a href={d.url} target="_blank" rel="noreferrer" className="underline decoration-line underline-offset-2 hover:text-accent">
                       {d.title}
                     </a>

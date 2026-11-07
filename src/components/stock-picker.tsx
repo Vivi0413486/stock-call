@@ -27,6 +27,7 @@ export function StockPicker({ honorific, onHonorific, history, onCall, onOpenRec
   const [avg, setAvg] = useState("");
   const [qty, setQty] = useState("");
   const timer = useRef<number | null>(null);
+  const searchSeq = useRef(0);
 
   // 검색: 400ms 디바운스. 한도(분당 120회)를 아낀다. effect 대신 입력 핸들러에서 예약한다
   const onQuery = (value: string) => {
@@ -40,14 +41,16 @@ export function StockPicker({ honorific, onHonorific, history, onCall, onOpenRec
     }
     setSearching(true);
     timer.current = window.setTimeout(async () => {
+      const seq = ++searchSeq.current;
       try {
         const r = await fetch(`/api/search?q=${encodeURIComponent(term)}`);
         const j = (await r.json()) as { hits: SymbolHit[] };
+        if (seq !== searchSeq.current) return; // 늦게 온 옛 결과는 버린다
         setHits(j.hits ?? []);
       } catch {
-        setHits([]);
+        if (seq === searchSeq.current) setHits([]);
       } finally {
-        setSearching(false);
+        if (seq === searchSeq.current) setSearching(false);
       }
     }, 400);
   };

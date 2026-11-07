@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { DisclosuresResponse, FinancialsResponse, KeyResponse, QuoteResponse, SymbolsResponse } from "./schema";
 import { moodFromChange, computePnl, toPercent } from "./mood";
-import { buildScript, dayWord, END_PHRASE } from "./prompt";
+import { buildScript, dayWord, END_PHRASE, josa, spokenDate, spokenPeriod } from "./prompt";
 import { sampleBrief } from "./sample";
 
 type Spec = { paths: Record<string, { get: { responses: Record<string, { content?: Record<string, { example?: unknown; examples?: Record<string, { value: unknown }> }> }> } }> };
@@ -87,6 +87,21 @@ test("첫 마디와 시스템 프롬프트에 데이터가 그대로 들어간�
   assert.match(s.systemPrompt, /수익률 -5\.9%/);
   assert.match(s.systemPrompt, new RegExp(END_PHRASE));
   assert.match(s.systemPrompt, /샘플/);
+  assert.match(s.firstMessage, /^하아… 누나, 나야 삼성전자. 샘플 데이터로 말하는 건데, 어제 이 점 삼 퍼센트 빠졌어/);
+  assert.match(s.systemPrompt, /누나가 물려 있다/);
+  assert.match(s.systemPrompt, /"누나"라고 부른다/);
+  assert.match(s.systemPrompt, /읽기 "십일월 오일"/);
+  assert.match(s.systemPrompt, /이천이십육년 삼분기 영업이익/);
+  assert.match(s.systemPrompt, /종가 기준이야/);
+  // 조회 실패는 "없음"이 아니라 "확인 안 됨"
+  const errBrief = { ...brief, disclosures: [], earnings: null, source: { quote: "phoenix", disclosures: "error", earnings: "error" } as const };
+  const e = buildScript(errBrief, "형", null);
+  assert.match(e.systemPrompt, /공시: 확인 안 됨/);
+  assert.doesNotMatch(e.systemPrompt, /공시: 없음/);
+  // 0.04%처럼 반올림하면 0인 등락률은 방향어를 붙이지 않는다
+  const flat = buildScript({ ...brief, price: { ...brief.price!, changePct: 0.04 } }, "형", null);
+  assert.match(flat.firstMessage, /거의 안 움직였어/);
+  assert.doesNotMatch(flat.firstMessage, /올랐어|빠졌어/);
   // 시세 없는 종목: 등락률 언급 금지
   const none = buildScript(sampleBrief("999999"), "형", null);
   assert.equal(none.mood.mood, "unknown");
@@ -94,9 +109,19 @@ test("첫 마디와 시스템 프롬프트에 데이터가 그대로 들어간�
   assert.match(none.systemPrompt, /등락률을 말하지 않는다/);
 });
 
+test("조사·날짜·기간 읽기", () => {
+  assert.equal(josa("형", "이", "가"), "형이");
+  assert.equal(josa("누나", "이", "가"), "누나가");
+  assert.equal(josa("카카오", "이야", "야"), "카카오야");
+  assert.equal(josa("NAVER", "이야", "야"), "NAVER야");
+  assert.equal(spokenDate("2026-11-05"), "십일월 오일");
+  assert.equal(spokenPeriod("2026 3분기"), "이천이십육년 삼분기");
+  assert.equal(spokenPeriod("2025 연간"), "이천이십오년 연간");
+});
+
 test("기준 시각 표현", () => {
   const now = new Date("2026-11-07T03:00:00+09:00"); // 토요일 새벽 KST
   assert.equal(dayWord("2026-11-06T06:30:00.000Z", now), "어제");
   assert.equal(dayWord("2026-11-07T01:00:00.000Z", now), "오늘");
-  assert.equal(dayWord("2026-11-03T06:30:00.000Z", now), "11월 3일에");
+  assert.equal(dayWord("2026-11-03T06:30:00.000Z", now), "십일월 삼일에"); // TTS용: 아라비아 숫자 금지
 });

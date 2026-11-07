@@ -35,7 +35,7 @@ function describeError(e: unknown): string {
 }
 
 export function CallScreen({ brief, script, honorific, onEnd }: Props) {
-  const hasVapi = Boolean(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY);
+  const hasVapi = Boolean(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY?.trim());
   const [state, setState] = useState<CallState>("connecting");
   const [avatar, setAvatar] = useState<AvatarState>("idle");
   const [lines, setLines] = useState<Line[]>([]);
@@ -53,6 +53,13 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
   const endTimerRef = useRef<number | null>(null);
   const modeRef = useRef<"voice" | "listen">(hasVapi ? "voice" : "listen");
   const scrollRef = useRef<HTMLDivElement>(null);
+  /** startVoice 재진입 방지 (다시 걸기 연타) */
+  const startingRef = useRef(false);
+  /** call-start를 받은 적이 있는지. 연결 전 call-end(SDK cleanup)는 실패 UI를 가리지 않게 무시한다 */
+  const liveRef = useRef(false);
+  /** 통화 시작 시각. 탭이 백그라운드로 가서 interval이 늦어져도 실제 경과로 상한을 판단한다 */
+  const liveSinceRef = useRef(0);
+  const connectTimerRef = useRef<number | null>(null);
 
   /** start()가 끝나기 전에 stop()하면 통화가 고아로 남는다. 반드시 start 완료 후 stop */
   const teardown = useCallback(async () => {
@@ -61,6 +68,10 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
     if (endTimerRef.current) {
       window.clearTimeout(endTimerRef.current);
       endTimerRef.current = null;
+    }
+    if (connectTimerRef.current) {
+      window.clearTimeout(connectTimerRef.current);
+      connectTimerRef.current = null;
     }
     if (typeof window !== "undefined") window.speechSynthesis?.cancel();
     if (!v) return;
@@ -100,14 +111,15 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
     };
   }, [teardown]);
 
-  // 타이머 + 브라우저 측 2분 상한 (서버 maxDurationSeconds가 1차, 이건 2차)
+  // 타이머 + 브라우저 측 2분 상한 (서버 maxDurationSeconds가 1차, 이건 2차). 실제 경과 시각으로 센다
   useEffect(() => {
     if (state !== "live") return;
+    if (!liveSinceRef.current) liveSinceRef.current = Date.now();
     const id = window.setInterval(() => {
-      elapsedRef.current += 1;
+      elapsedRef.current = Math.floor((Date.now() - liveSinceRef.current) / 1000);
       setElapsed(elapsedRef.current);
       if (elapsedRef.current >= MAX_CALL_SECONDS) void hangUp();
-    }, 1000);
+    }, 500);
     return () => window.clearInterval(id);
   }, [state, hangUp]);
 
@@ -125,6 +137,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
 
   /* ---------- 듣기 모드 (Vapi 키 없음): 브라우저 TTS로 첫 마디만 ---------- */
   const startListenMode = useCallback(() => {
+    liveRef.current = true;
     setState("live");
     pushLine({ role: "assistant", text: script.firstMessage });
     const synth = window.speechSynthesis;
@@ -146,20 +159,40 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
 
   /* ---------- 음성 모드 (Vapi) ---------- */
   const startVoice = useCallback(async () => {
-    const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY!;
+    const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY!.trim();
+    if (startingRef.current) return;
+    startingRef.current = true;
+    setState("connecting");
+    setError(null);
+    liveRef.current = false;
     await teardown();
+    // 마이크 권한 팝업 방치·연결 멈춤 대비: 20초 안에 call-start가 없으면 실패로 돌린다
+    connectTimerRef.current = window.setTimeout(() => {
+      if (liveRef.current) return;
+      void teardown();
+      setError("20초 안에 연결되지 않았어요");
+      setState("failed");
+    }, 20_000);
     try {
       const { default: VapiCtor } = await import("@vapi-ai/web");
       const vapi = new VapiCtor(publicKey);
       vapiRef.current = vapi;
 
       vapi.on("call-start", () => {
+        liveRef.current = true;
+        if (connectTimerRef.current) {
+          window.clearTimeout(connectTimerRef.current);
+          connectTimerRef.current = null;
+        }
         setState("live");
         setAvatar("listening");
       });
       vapi.on("speech-start", () => setAvatar("speaking"));
       vapi.on("speech-end", () => setAvatar("listening"));
-      vapi.on("call-end", () => finalize());
+      // 연결 전에 SDK cleanup이 보내는 call-end는 무시한다 (실패 UI가 가려지고 빈 기록이 남는 것 방지)
+      vapi.on("call-end", () => {
+        if (liveRef.current) finalize();
+      });
       vapi.on("call-start-failed", (e: unknown) => {
         setError(describeError(e));
         setState("failed");
@@ -219,8 +252,17 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
     } catch (e) {
       setState("failed");
       setError(e instanceof Error ? e.message : "음성 연결에 실패했어요");
+    } finally {
+      startingRef.current = false;
     }
   }, [brief.name, honorific, script, teardown, finalize, hangUp, pushLine]);
+
+  /** 연결 중 취소: start가 끝나길 기다렸다가 stop (SDK가 preflight 취소를 지원) */
+  const cancelConnecting = useCallback(async () => {
+    setState("ending");
+    await teardown();
+    finalize("취소");
+  }, [teardown, finalize]);
 
   // 마운트 시 자동 시작 (받기 버튼이 사용자 제스처). 다음 틱에 시작해 StrictMode 이중 마운트에서도 한 번만 건다
   useEffect(() => {
@@ -349,13 +391,18 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
             <span className="text-[11px] text-muted">{muted ? "음소거 중" : "음소거"}</span>
           </div>
           <div className="flex flex-col items-center gap-1.5">
-            {/* 연결 중엔 끊을 수 없다. start() 완료 전 stop은 통화를 고아로 만든다 */}
-            <button onClick={() => void hangUp()} disabled={state !== "live"} aria-label="통화 종료" className="flex h-18 w-18 items-center justify-center rounded-full bg-red shadow-lg active:scale-95 disabled:opacity-40">
+            {/* 연결 중엔 '취소'(start 완료를 기다린 뒤 stop), 통화 중엔 '끊기' */}
+            <button
+              onClick={() => void (state === "connecting" ? cancelConnecting() : hangUp())}
+              disabled={state !== "live" && state !== "connecting"}
+              aria-label={state === "connecting" ? "연결 취소" : "통화 종료"}
+              className="flex h-18 w-18 items-center justify-center rounded-full bg-red shadow-lg active:scale-95 disabled:opacity-40"
+            >
               <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: "rotate(135deg)" }}>
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z" />
               </svg>
             </button>
-            <span className="text-[11px] text-muted">끊기</span>
+            <span className="text-[11px] text-muted">{state === "connecting" ? "취소" : "끊기"}</span>
           </div>
         </div>
       )}

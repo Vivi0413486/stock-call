@@ -13,7 +13,9 @@ test("정수 한글 읽기", () => {
   assert.equal(koInteger(12000), "만 이천");
   assert.equal(koInteger(188700), "십팔만 팔천칠백");
   assert.equal(koInteger(612000), "육십일만 이천");
-  assert.equal(koInteger(100000000), "억");
+  assert.equal(koInteger(100000000), "일억");
+  assert.equal(koInteger(100010000), "일억 만");
+  assert.equal(koInteger(1000000000000), "일조");
   assert.equal(koInteger(107440000000000), "백칠조 사천사백억");
 });
 

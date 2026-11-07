@@ -20,6 +20,8 @@ import { sampleBrief, sampleSearch } from "./sample";
 
 const BASE = "https://api.chickstockfi.com/openapi/v1";
 const CACHE_TTL_MS = 5 * 60 * 1000;
+/** 일부 실패한 결과는 짧게만 캐시해 곧 재시도한다 */
+const PARTIAL_TTL_MS = 15 * 1000;
 const TIMEOUT_MS = 15_000;
 
 export function phoenixKey(): string | null {
@@ -75,18 +77,32 @@ async function call<T>(path: string, parse: (json: unknown) => T): Promise<T> {
 
 /* ---------- 캐시 ---------- */
 
-type Entry<T> = { at: number; value: Promise<T> };
+type Entry<T> = { expiresAt: number; value: Promise<T> };
 const briefCache = new Map<string, Entry<StockBrief>>();
 
-function cached<T>(map: Map<string, Entry<T>>, k: string, make: () => Promise<T>): Promise<T> {
+/**
+ * Promise 캐시. 같은 종목 동시 요청은 하나로 합쳐진다.
+ * make는 { value, ttlMs } 를 돌려줘 결과 상태에 따라 TTL을 정한다(부분 실패 = 짧게).
+ * reject된 Promise는 지운다. 만료 뒤 들어온 새 항목을 옛 Promise가 지우지 않도록 동일성 검사를 한다.
+ */
+function cached<T>(map: Map<string, Entry<T>>, k: string, make: () => Promise<{ value: T; ttlMs: number }>): Promise<T> {
   const hit = map.get(k);
   const now = Date.now();
-  if (hit && now - hit.at < CACHE_TTL_MS) return hit.value;
-  const value = make();
-  map.set(k, { at: now, value });
-  // 실패한 Promise는 캐시에 남기지 않는다 (다음 요청이 재시도할 수 있게)
-  value.catch(() => map.delete(k));
-  return value;
+  if (hit && now < hit.expiresAt) return hit.value;
+  for (const [key, e] of map) if (now >= e.expiresAt) map.delete(key); // 만료 항목 정리
+  const entry: Entry<T> = { expiresAt: now + CACHE_TTL_MS, value: undefined as unknown as Promise<T> };
+  entry.value = make().then(
+    ({ value, ttlMs }) => {
+      entry.expiresAt = Date.now() + ttlMs;
+      return value;
+    },
+    (err) => {
+      if (map.get(k) === entry) map.delete(k);
+      throw err;
+    },
+  );
+  map.set(k, entry);
+  return entry.value;
 }
 
 /* ---------- 개별 엔드포인트 ---------- */
@@ -142,8 +158,8 @@ export async function getStockBrief(symbol: string): Promise<StockBrief> {
       }
     }
 
-    // 시세 전부 실패면 종목명조차 없다 → 빠른 선택 목록의 이름이라도 쓰도록 호출자에게 null 전달
-    const name = quote?.name ?? (discl ? symbol : symbol);
+    // 시세가 실패하면 종목명이 없다 → 코드 그대로 두고 라우트가 목록·검색 결과 이름으로 바꾼다
+    const name = quote?.name ?? symbol;
 
     // 영업이익 우선, 없으면 매출. 분기 값만 (연간·누적과 섞지 않는다)
     const pick =
@@ -151,7 +167,8 @@ export async function getStockBrief(symbol: string): Promise<StockBrief> {
       rows?.find((r) => r.account_code === "revenue" && r.period_type === "quarter") ??
       null;
 
-    return {
+    const partial = !quote || !discl || !rows;
+    const brief: StockBrief = {
       symbol,
       name,
       exchange: quote?.exchange ?? null,
@@ -175,12 +192,13 @@ export async function getStockBrief(symbol: string): Promise<StockBrief> {
         ? { account: pick.account, period: pick.period, value: pick.value, unit: pick.unit, preliminary: pick.preliminary ?? false }
         : null,
       source: {
-        quote: quote ? "phoenix" : "none",
-        disclosures: discl ? "phoenix" : "none",
-        earnings: pick ? "phoenix" : "none",
+        quote: quote ? "phoenix" : "error",
+        disclosures: discl ? "phoenix" : "error",
+        earnings: pick ? "phoenix" : rows ? "none" : "error",
       },
       fetchedAt: new Date().toISOString(),
     };
+    return { value: brief, ttlMs: partial ? PARTIAL_TTL_MS : CACHE_TTL_MS };
   });
 }
 

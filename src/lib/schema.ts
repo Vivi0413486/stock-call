@@ -139,11 +139,11 @@ export const StockBrief = z.object({
     .nullable(),
   disclosures: z.array(Disclosure), // 최대 3건
   earnings: Earnings.nullable(),
-  /** 어떤 데이터가 실제 API에서 왔는지. 화면에 출처를 정직하게 표시한다 */
+  /** 어떤 데이터가 실제 API에서 왔는지. none=해당 없음, error=조회 실패(캐릭터가 언급하지 않는다) */
   source: z.object({
-    quote: z.enum(["phoenix", "sample", "none"]),
-    disclosures: z.enum(["phoenix", "sample", "none"]),
-    earnings: z.enum(["phoenix", "sample", "none"]),
+    quote: z.enum(["phoenix", "sample", "none", "error"]),
+    disclosures: z.enum(["phoenix", "sample", "none", "error"]),
+    earnings: z.enum(["phoenix", "sample", "none", "error"]),
   }),
   fetchedAt: z.string(),
 });

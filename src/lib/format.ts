@@ -23,8 +23,16 @@ export function fmtAsOf(iso: string, marketStatus: string | null): string {
   }).formatToParts(d);
   const get = (t: string) => kst.find((p) => p.type === t)?.value ?? "";
   const stamp = `${get("month")}/${get("day")} ${get("hour")}:${get("minute")}`;
-  const closed = !marketStatus || !/장중|open/i.test(marketStatus);
-  return closed ? `${stamp} 종가 기준` : `${stamp} 장중`;
+  return isMarketClosed(marketStatus) ? `${stamp} 종가 기준` : `${stamp} 장중 시세 (실시간 아님)`;
+}
+
+/**
+ * Phoenix market_status: 주말·휴일·08~20시 밖은 "CLOSED", 거래정지는 "HALTED"(openapi.json 설명).
+ * 장중 값은 제공자 세션 문자열이라 열거되어 있지 않다 → 닫힘이 확실한 경우만 종가로, 모르면 장중으로 보지 않고 종가로 둔다
+ */
+export function isMarketClosed(marketStatus: string | null | undefined): boolean {
+  if (!marketStatus) return true;
+  return /closed|halt|장마감|휴장/i.test(marketStatus);
 }
 
 /** "2026-11-05" → "11월 5일" */

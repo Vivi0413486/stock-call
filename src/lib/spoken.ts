@@ -8,8 +8,8 @@ const DIGITS = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구
 const SMALL = ["", "십", "백", "천"];
 const BIG = ["", "만", "억", "조", "경"];
 
-/** 0~9999 를 한글로. 1은 자리 앞에서 생략 ("천이백" , 단 맨 끝 "일"은 유지) */
-function under10k(n: number, isFirstGroup: boolean): string {
+/** 0~9999 를 한글로. 1은 자리 앞에서 생략 ("천이백", 단 맨 끝 "일"은 유지) */
+function under10k(n: number): string {
   let out = "";
   for (let i = 3; i >= 0; i--) {
     const d = Math.floor(n / 10 ** i) % 10;
@@ -18,11 +18,10 @@ function under10k(n: number, isFirstGroup: boolean): string {
     const digit = d === 1 && i > 0 ? "" : DIGITS[d];
     out += digit + SMALL[i];
   }
-  void isFirstGroup;
   return out;
 }
 
-/** 정수를 한글 수사로. 0 → "영", 188700 → "십팔만 팔천칠백" */
+/** 정수를 한글 수사로. 0 → "영", 188700 → "십팔만 팔천칠백". 부호는 버린다(호출 쪽에서 "마이너스"를 붙인다) */
 export function koInteger(n: number): string {
   n = Math.round(Math.abs(n));
   if (n === 0) return "영";
@@ -31,9 +30,9 @@ export function koInteger(n: number): string {
   while (n > 0 && i < BIG.length) {
     const g = n % 10000;
     if (g) {
-      let word = under10k(g, i > 0);
-      // "일만"→"만" (단, 만 그룹이 정확히 1일 때만)
-      if (i >= 1 && g === 1) word = "";
+      let word = under10k(g);
+      // "일만"→"만" (만 그룹이 정확히 1일 때만). 억·조는 "일억"·"일조"로 읽는다
+      if (i === 1 && g === 1) word = "";
       groups.unshift(word + BIG[i]);
     }
     n = Math.floor(n / 10000);

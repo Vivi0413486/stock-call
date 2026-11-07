@@ -1,1 +1,3 @@
 {"t":0,"agent":"areview","agent_type":"reviewer","event":"agent_start","parent_mode":"none"}
+{"t":0,"agent":"a044212","agent_type":"reviewer","event":"agent_stop","success":true,"duration_ms":232885}
+{"t":0,"agent":"areview","agent_type":"reviewer","event":"agent_stop","success":true,"duration_ms":310287}
