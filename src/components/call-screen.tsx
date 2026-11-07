@@ -54,6 +54,11 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
   const [muted, setMuted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"voice" | "listen">(hasVapi ? "voice" : "listen");
+  /** 마이크 장치 목록·선택·입력 레벨. 발표 노트북에서 엉뚱한 장치가 잡히는 사고를 화면에서 바로 잡기 위해 */
+  const [mics, setMics] = useState<{ id: string; label: string }[]>([]);
+  const [micId, setMicId] = useState<string>("");
+  const [micLevel, setMicLevel] = useState(0);
+  const [micSilent, setMicSilent] = useState(false);
 
   const vapiRef = useRef<Vapi | null>(null);
   const startPromiseRef = useRef<Promise<unknown> | null>(null);
@@ -133,6 +138,45 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
     return () => window.clearInterval(id);
   }, [state, hangUp]);
 
+  // 마이크 입력 레벨 폴링. 6초 넘게 0이면 "안 들려요" 경고
+  useEffect(() => {
+    if (state !== "live" || mode !== "voice") return;
+    let zeroSince = Date.now();
+    const id = window.setInterval(() => {
+      const v = vapiRef.current;
+      const lvl = v ? v.getLocalAudioLevel() : 0;
+      setMicLevel(lvl);
+      if (lvl > 0.01) zeroSince = Date.now();
+      setMicSilent(Date.now() - zeroSince > 6000);
+    }, 120);
+    return () => window.clearInterval(id);
+  }, [state, mode]);
+
+  /** 장치 목록 갱신 (권한이 있어야 label이 보인다 → call-start 뒤에 호출) */
+  const refreshMics = useCallback(async () => {
+    try {
+      const all = await navigator.mediaDevices.enumerateDevices();
+      const list = all.filter((d) => d.kind === "audioinput").map((d, i) => ({ id: d.deviceId, label: d.label || `마이크 ${i + 1}` }));
+      setMics(list);
+    } catch {
+      /* 장치 목록 불가 */
+    }
+  }, []);
+
+  const changeMic = useCallback(async (id: string) => {
+    setMicId(id);
+    try {
+      localStorage.setItem("stockcall.micId", id);
+    } catch {
+      /* 저장 불가 */
+    }
+    try {
+      await vapiRef.current?.setInputDevicesAsync({ audioDeviceId: id });
+    } catch {
+      setError("마이크 장치를 바꾸지 못했어요");
+    }
+  }, []);
+
   // 자막 자동 스크롤
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -198,6 +242,17 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
         }
         setState("live");
         setAvatar("listening");
+        void refreshMics();
+        // 지난번에 고른 마이크가 있으면 그대로 적용
+        try {
+          const saved = localStorage.getItem("stockcall.micId");
+          if (saved) {
+            setMicId(saved);
+            void vapi.setInputDevicesAsync({ audioDeviceId: saved }).catch(() => undefined);
+          }
+        } catch {
+          /* 저장소 불가 */
+        }
       });
       vapi.on("speech-start", () => setAvatar("speaking"));
       vapi.on("speech-end", () => setAvatar("listening"));
@@ -266,7 +321,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
     } finally {
       startingRef.current = false;
     }
-  }, [brief.name, honorific, script, sttChoice, ttsChoice, voiceOverride, modelOverride, speedOverride, teardown, finalize, hangUp, pushLine]);
+  }, [brief.name, honorific, script, sttChoice, ttsChoice, voiceOverride, modelOverride, speedOverride, teardown, finalize, hangUp, pushLine, refreshMics]);
 
   /** 연결 중 취소: start가 끝나길 기다렸다가 stop (SDK가 preflight 취소를 지원) */
   const cancelConnecting = useCallback(async () => {
@@ -368,6 +423,30 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
         <p className="text-center text-xs text-accent">Vapi 키가 없어 듣기 모드예요. 첫 마디만 브라우저 음성으로 들려줍니다.</p>
       )}
       {error && state === "live" && <p className="text-center text-xs text-red">{error}</p>}
+
+      {mode === "voice" && state === "live" && (
+        <div className={`rise flex items-center gap-2 rounded-xl border px-3 py-2 text-xs ${micSilent ? "border-red/60 bg-red/10" : "border-line bg-panel/60"}`}>
+          <span className="shrink-0 text-muted">🎙️ 내 마이크</span>
+          <div className="h-2 w-20 shrink-0 overflow-hidden rounded-full bg-line" aria-hidden>
+            <div className={`h-full rounded-full transition-[width] duration-100 ${micSilent ? "bg-red" : "bg-green"}`} style={{ width: `${Math.min(100, Math.round(micLevel * 300))}%` }} />
+          </div>
+          <select
+            value={micId}
+            onChange={(e) => void changeMic(e.target.value)}
+            onFocus={() => void refreshMics()}
+            className="min-w-0 flex-1 truncate rounded-lg border border-line bg-bg-2 px-2 py-1 text-xs text-fg"
+            aria-label="마이크 장치"
+          >
+            <option value="">기본 마이크</option>
+            {mics.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.label}
+              </option>
+            ))}
+          </select>
+          {micSilent && <span className="shrink-0 text-red">소리가 안 들어와요</span>}
+        </div>
+      )}
 
       {/* 조작 */}
       {state === "failed" ? (
