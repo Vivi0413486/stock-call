@@ -293,7 +293,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
         )}
         {lines.map((l, i) => (
           <p key={i} className={`rise ${l.role === "user" ? "text-right text-muted" : ""}`}>
-            <span className="mr-1.5 text-[11px] text-accent">{l.role === "assistant" ? brief.name : honorific === "형" ? "나" : "나"}</span>
+            <span className="mr-1.5 text-[11px] text-accent">{l.role === "assistant" ? brief.name : "나"}</span>
             {l.text}
           </p>
         ))}
