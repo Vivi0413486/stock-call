@@ -82,7 +82,7 @@
       <p class="sub">보유 종목이 사람처럼 전화를 걸어 시세·공시를 자기 사연처럼 털어놓는다</p>
     </div>
   </div>
-  <div class="foot" style="z-index:1"><span>팀 이보배 (Vivi)</span><span style="color:var(--accent)">stock-call-lime.vercel.app</span><span>데이터 Phoenix AI · 음성 Vapi</span></div>
+  <div class="foot" style="z-index:1"><span>팀 이보배 (Vivi)</span><a href="https://stock-call-lime.vercel.app/" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none; position:relative; z-index:2;">stock-call-lime.vercel.app</a><span>데이터 Phoenix AI · 음성 Vapi</span></div>
 </section>
 
 <!-- 2 문제 -->
@@ -232,7 +232,8 @@
     </div>
   </div>
   <p style="margin-top:28px; font-size:30px; font-weight:700;">주식 앱은 숫자를 보여줍니다. 저희는 <em>주식이 형한테 전화를 걸게</em> 했습니다.</p>
-  <div class="foot"><span style="color:var(--accent)">stock-call-lime.vercel.app</span><span>데이터: Phoenix AI · 음성: Vapi · 투자 권유 아님</span><span>9 / 9</span></div>
+  <a href="https://stock-call-lime.vercel.app/" target="_blank" rel="noopener" style="position:relative; z-index:2; display:inline-flex; align-items:center; gap:12px; margin-top:22px; padding:16px 28px; border-radius:16px; background:var(--accent); color:#1a1400; font-size:24px; font-weight:800; text-decoration:none; box-shadow:0 10px 30px rgba(255,209,102,0.25);">📞 데모 보러가기 <span style="font-size:18px; font-weight:600; opacity:0.8;">stock-call-lime.vercel.app</span></a>
+  <div class="foot"><a href="https://stock-call-lime.vercel.app/" target="_blank" rel="noopener" style="color:var(--accent); text-decoration:none; position:relative; z-index:2;">stock-call-lime.vercel.app</a><span>데이터: Phoenix AI · 음성: Vapi · 투자 권유 아님</span><span>9 / 9</span></div>
 </section>
 
 </div>
@@ -244,7 +245,7 @@
   function show(n) { i = Math.max(0, Math.min(slides.length - 1, n)); slides.forEach((s, k) => s.classList.toggle('active', k === i)); nav.textContent = (i + 1) + ' / ' + slides.length; location.hash = i + 1; }
   function fit() { const s = Math.min(innerWidth / 1280, innerHeight / 720); document.getElementById('deck').style.transform = 'scale(' + s + ')'; }
   addEventListener('keydown', e => { if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); show(i + 1); } if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); } });
-  addEventListener('click', e => { if (e.clientX > innerWidth / 2) show(i + 1); else show(i - 1); });
+  addEventListener('click', e => { if (e.target.closest('a')) return; if (e.clientX > innerWidth / 2) show(i + 1); else show(i - 1); });
   addEventListener('resize', fit);
   fit(); show(parseInt(location.hash.slice(1) || '1', 10) - 1);
 </script>
