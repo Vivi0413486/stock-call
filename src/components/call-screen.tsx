@@ -7,6 +7,7 @@ import { fmtAsOf, fmtKrw, fmtPct } from "@/lib/format";
 import { END_PHRASE, MAX_CALL_SECONDS, type CallScript, type Honorific } from "@/lib/prompt";
 import type { StockBrief } from "@/lib/schema";
 import type { Line } from "@/lib/storage";
+import { buildTranscriber, resolveTranscriberChoice } from "@/lib/transcriber";
 
 type VapiAssistant = Exclude<NonNullable<Parameters<Vapi["start"]>[0]>, string>;
 type VapiOverrides = NonNullable<Parameters<Vapi["start"]>[1]>;
@@ -235,7 +236,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
           name: `${brief.name} 주식 캐릭터`,
           firstMessage: script.firstMessage,
           firstMessageMode: "assistant-speaks-first",
-          transcriber: { provider: "deepgram", model: "nova-3", language: "ko" },
+          transcriber: buildTranscriber(resolveTranscriberChoice(process.env.NEXT_PUBLIC_VAPI_TRANSCRIBER)),
           model: {
             provider: "openai",
             model: "gpt-4o",
