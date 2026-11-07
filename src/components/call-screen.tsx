@@ -8,6 +8,7 @@ import { END_PHRASE, MAX_CALL_SECONDS, type CallScript, type Honorific } from "@
 import type { StockBrief } from "@/lib/schema";
 import type { Line } from "@/lib/storage";
 import { buildTranscriber, resolveTranscriberChoice } from "@/lib/transcriber";
+import { buildVoice, resolveTtsChoice } from "@/lib/voice";
 
 type VapiAssistant = Exclude<NonNullable<Parameters<Vapi["start"]>[0]>, string>;
 type VapiOverrides = NonNullable<Parameters<Vapi["start"]>[1]>;
@@ -38,9 +39,11 @@ function describeError(e: unknown): string {
 export function CallScreen({ brief, script, honorific, onEnd }: Props) {
   const hasVapi = Boolean(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY?.trim());
   // STT 공급자: URL ?stt=openai|azure|deepgram|11labs 가 환경변수보다 우선 (재시작 없이 비교용)
-  const sttChoice = resolveTranscriberChoice(
-    (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("stt") : null) ?? process.env.NEXT_PUBLIC_VAPI_TRANSCRIBER,
-  );
+  const query = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+  const sttChoice = resolveTranscriberChoice(query?.get("stt") ?? process.env.NEXT_PUBLIC_VAPI_TRANSCRIBER);
+  // TTS 공급자: URL ?tts=openai|azure|11labs 가 환경변수보다 우선
+  const ttsChoice = resolveTtsChoice(query?.get("tts") ?? process.env.NEXT_PUBLIC_VAPI_TTS);
+  const voiceOverride = query?.get("voice") ?? process.env.NEXT_PUBLIC_VAPI_VOICE_ID ?? undefined;
   const [state, setState] = useState<CallState>("connecting");
   const [avatar, setAvatar] = useState<AvatarState>("idle");
   const [lines, setLines] = useState<Line[]>([]);
@@ -222,7 +225,6 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
         }
       });
 
-      const voiceId = process.env.NEXT_PUBLIC_VAPI_VOICE_ID || "sarah";
       const assistantId = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID;
       let p: Promise<unknown>;
       if (assistantId) {
@@ -247,7 +249,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
             temperature: 0.8,
             messages: [{ role: "system", content: script.systemPrompt }],
           },
-          voice: { provider: "11labs", voiceId, model: "eleven_flash_v2_5", language: "ko", stability: 0.35, similarityBoost: 0.8 },
+          voice: buildVoice(ttsChoice, script.persona, script.mood, voiceOverride),
           maxDurationSeconds: MAX_CALL_SECONDS,
           endCallPhrases: [END_PHRASE],
         };
@@ -262,7 +264,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
     } finally {
       startingRef.current = false;
     }
-  }, [brief.name, honorific, script, sttChoice, teardown, finalize, hangUp, pushLine]);
+  }, [brief.name, honorific, script, sttChoice, ttsChoice, voiceOverride, teardown, finalize, hangUp, pushLine]);
 
   /** 연결 중 취소: start가 끝나길 기다렸다가 stop (SDK가 preflight 취소를 지원) */
   const cancelConnecting = useCallback(async () => {
@@ -331,7 +333,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
             {fmtAsOf(p.asOf, p.marketStatus)}
             {brief.source.quote === "sample" && " · 샘플 데이터"}
             {brief.source.quote === "phoenix" && " · Phoenix AI"}
-            {mode === "voice" && ` · STT ${sttChoice}`}
+            {mode === "voice" && ` · STT ${sttChoice} · TTS ${ttsChoice}`}
           </p>
         )}
       </div>
