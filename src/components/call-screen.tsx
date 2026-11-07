@@ -262,7 +262,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
     } finally {
       startingRef.current = false;
     }
-  }, [brief.name, honorific, script, teardown, finalize, hangUp, pushLine]);
+  }, [brief.name, honorific, script, sttChoice, teardown, finalize, hangUp, pushLine]);
 
   /** 연결 중 취소: start가 끝나길 기다렸다가 stop (SDK가 preflight 취소를 지원) */
   const cancelConnecting = useCallback(async () => {
