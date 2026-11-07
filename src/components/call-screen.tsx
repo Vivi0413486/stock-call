@@ -37,6 +37,10 @@ function describeError(e: unknown): string {
 
 export function CallScreen({ brief, script, honorific, onEnd }: Props) {
   const hasVapi = Boolean(process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY?.trim());
+  // STT 공급자: URL ?stt=openai|azure|deepgram|11labs 가 환경변수보다 우선 (재시작 없이 비교용)
+  const sttChoice = resolveTranscriberChoice(
+    (typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("stt") : null) ?? process.env.NEXT_PUBLIC_VAPI_TRANSCRIBER,
+  );
   const [state, setState] = useState<CallState>("connecting");
   const [avatar, setAvatar] = useState<AvatarState>("idle");
   const [lines, setLines] = useState<Line[]>([]);
@@ -236,7 +240,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
           name: `${brief.name} 주식 캐릭터`,
           firstMessage: script.firstMessage,
           firstMessageMode: "assistant-speaks-first",
-          transcriber: buildTranscriber(resolveTranscriberChoice(process.env.NEXT_PUBLIC_VAPI_TRANSCRIBER)),
+          transcriber: buildTranscriber(sttChoice),
           model: {
             provider: "openai",
             model: "gpt-4o",
@@ -327,6 +331,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
             {fmtAsOf(p.asOf, p.marketStatus)}
             {brief.source.quote === "sample" && " · 샘플 데이터"}
             {brief.source.quote === "phoenix" && " · Phoenix AI"}
+            {mode === "voice" && ` · STT ${sttChoice}`}
           </p>
         )}
       </div>
