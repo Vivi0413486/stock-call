@@ -74,7 +74,7 @@ src/lib/mood.ts      등락률 → 기분, 평단 → 수익률 (결정적 로�
 src/lib/prompt.ts    첫 마디 + 시스템 프롬프트 생성
 src/lib/spoken.ts    숫자 → 한글 수사 (TTS 발음용)
 src/components/      stock-picker → incoming-call → call-screen → call-card
-src/app/api/         /stock/[symbol] · /search · /health
+src/app/api/         /stock/[symbol] · /search · /health(연결 확인용, 화면에는 표시하지 않음)
 ```
 
 데이터 출처: Phoenix AI (알프소프트). 투자 권유가 아닙니다.

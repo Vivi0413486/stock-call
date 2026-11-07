@@ -4,7 +4,6 @@ import { useCallback, useRef, useState } from "react";
 import { CallCard } from "@/components/call-card";
 import { CallScreen, type CallResult } from "@/components/call-screen";
 import { IncomingCall } from "@/components/incoming-call";
-import { StatusBar } from "@/components/status-bar";
 import { StockPicker, type Pick } from "@/components/stock-picker";
 import type { Position } from "@/lib/mood";
 import { buildScript, type CallScript, type Honorific } from "@/lib/prompt";
@@ -134,10 +133,6 @@ export function App() {
           />
         )}
       </div>
-      <footer className="mt-6 space-y-1">
-        <StatusBar />
-        <p className="text-center text-[10px] text-muted/70">데이터: Phoenix AI (알프소프트) · 음성: Vapi · 로컬 시연용 · 투자 권유 아님</p>
-      </footer>
     </main>
   );
 }
