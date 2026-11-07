@@ -1,0 +1,376 @@
+{
+  "version": 1,
+  "jobId": "9822b4e3-7274-46c3-bb95-05cfe218f570",
+  "sessionId": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+  "scopeKey": "c775b6e87b4a9e5f9b082f3519221e95287a57ebf10f50ac6ac6a05544127f60",
+  "revision": 61,
+  "createdAt": "2026-11-07T06:23:44.893Z",
+  "updatedAt": "2026-11-07T06:24:16.569Z",
+  "producerGraceExpiresAt": "2026-11-07T06:24:14.894Z",
+  "bestEffortDeadlineAt": "2026-11-07T06:25:07.894Z",
+  "producers": {
+    "core": {
+      "state": "sealed",
+      "intentKey": "3f502b81a4d386dd91d7f81c6622298e5809162d986b0b24a25d0e3b671a4612",
+      "payloadDigest": "3f502b81a4d386dd91d7f81c6622298e5809162d986b0b24a25d0e3b671a4612",
+      "sealedAt": "2026-11-07T06:24:15.301Z",
+      "sealedBy": "recovery"
+    },
+    "wiki": {
+      "state": "no-op",
+      "sealedAt": "2026-11-07T06:23:44.908Z",
+      "sealedBy": "wiki-producer"
+    }
+  },
+  "actions": {
+    "foreground-cleanup": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "6fbe216ec0ff57447eee882219702344ec9fc69037d29d0de9f199ced7077fa5",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "ended_at": "2026-11-07T06:24:15.134Z",
+          "reason": "other",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 9000,
+      "claimedAt": "2026-11-07T06:24:14.953Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "3d34b867-2d7b-44d2-b62d-fa6c38a4262f",
+        "phase": "terminal",
+        "deadlineAt": "2026-11-07T06:24:24.896Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-11-07T06:24:15.293Z"
+    },
+    "wiki-capture": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 0,
+      "idempotencyKey": "5661c59ec5e3d7d890c3af21d2096a87aeb1e4d3c7638dee30f03a78ac7646cd",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {}
+      },
+      "budgetMs": 9000,
+      "completedAt": "2026-11-07T06:23:44.908Z"
+    },
+    "team-cleanup": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "a2452e357d1f03c64b45a6985d70119915b58617e09e1e94a960a7c809286714",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "ended_at": "2026-11-07T06:24:15.134Z",
+          "reason": "other",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 9000,
+      "claimedAt": "2026-11-07T06:24:15.318Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "5124764d-c2f6-46e6-8bab-3d0d6e2c216b",
+        "phase": "terminal",
+        "deadlineAt": "2026-11-07T06:24:24.896Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-11-07T06:24:15.482Z"
+    },
+    "python-cleanup": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "7f56a8de87872a761bfaa135d3bc8d257dccf42251952d8bdacb752cf495efe7",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "ended_at": "2026-11-07T06:24:15.134Z",
+          "reason": "other",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 9000,
+      "claimedAt": "2026-11-07T06:24:15.498Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "63011c8e-8068-4cad-bc12-8805b9842826",
+        "phase": "terminal",
+        "deadlineAt": "2026-11-07T06:24:24.896Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-11-07T06:24:15.664Z"
+    },
+    "reply-cleanup": {
+      "class": "required",
+      "phase": "deferred-required",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "2d8fad6ade04d64affa493b1e7facdff7ffea9dfacc4ccf6f28de3d5ae745963",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {}
+      },
+      "budgetMs": 9000,
+      "claimedAt": "2026-11-07T06:24:15.683Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "985caba5-4d0b-4642-9352-1e182baf3a12",
+        "phase": "terminal",
+        "deadlineAt": "2026-11-07T06:24:24.896Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-11-07T06:24:15.831Z"
+    },
+    "callback": {
+      "class": "best-effort",
+      "phase": "deferred-best-effort",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "a00acc9f4f5ba3270098bf82c9ccb31cfd62381032589e72de92c77b8e114c75",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "ended_at": "2026-11-07T06:24:15.134Z",
+          "reason": "other",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 2000,
+      "claimedAt": "2026-11-07T06:24:15.854Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "abf99898-f53c-41ed-8f94-97730bca08b0",
+        "phase": "terminal",
+        "deadlineAt": "2026-11-07T06:24:24.896Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-11-07T06:24:15.996Z"
+    },
+    "notification": {
+      "class": "best-effort",
+      "phase": "deferred-best-effort",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "12abf9ecbd97e90c2fed792d41a2ffa45237c6b440cd0e2d4d3c1fc4be9ec0ea",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "ended_at": "2026-11-07T06:24:15.134Z",
+          "reason": "other",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 2000,
+      "claimedAt": "2026-11-07T06:24:16.033Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "b30d7d1d-f14b-4f91-8c2d-294a46a567d7",
+        "phase": "terminal",
+        "deadlineAt": "2026-11-07T06:24:24.896Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-11-07T06:24:16.179Z"
+    },
+    "openclaw": {
+      "class": "best-effort",
+      "phase": "deferred-best-effort",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "cd28dfe03e585de09d2675f0e21fc0d0305dd501f10a39603c59c8ed16194346",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {},
+        "metrics": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "ended_at": "2026-11-07T06:24:15.134Z",
+          "reason": "other",
+          "agents_spawned": 0,
+          "agents_completed": 0,
+          "modes_used": []
+        }
+      },
+      "budgetMs": 2000,
+      "claimedAt": "2026-11-07T06:24:16.214Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "bdd4d893-f0a0-4049-bfd4-ff3f0fb124d3",
+        "phase": "terminal",
+        "deadlineAt": "2026-11-07T06:24:24.896Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-11-07T06:24:16.350Z"
+    },
+    "spawn-next": {
+      "class": "best-effort",
+      "phase": "deferred-best-effort",
+      "status": "completed",
+      "attempts": 1,
+      "idempotencyKey": "eab147d94a8c8d59614d7ce0b6ce6029b90ad7ac6937eedf77f23b5b9e81f7c9",
+      "payload": {
+        "transcriptPath": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+        "cwd": "/Users/vivi/sideproject/stock-call",
+        "reason": "other",
+        "input": {
+          "session_id": "9ca0da91-4a19-4d81-b83c-c82953b5083a",
+          "transcript_path": "/Users/vivi/.claude/projects/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a.jsonl",
+          "cwd": "/Users/vivi/sideproject/stock-call",
+          "scratchpad_dir": "/private/tmp/claude-501/-Users-vivi/9ca0da91-4a19-4d81-b83c-c82953b5083a/scratchpad",
+          "prompt_id": "a90b00ec-2147-4ac9-adc1-5e61cad4b123",
+          "hook_event_name": "SessionEnd",
+          "reason": "other"
+        },
+        "initialTeamNames": [],
+        "openClawRouting": {}
+      },
+      "budgetMs": 2000,
+      "claimedAt": "2026-11-07T06:24:16.386Z",
+      "runner": {
+        "attempt": 1,
+        "runnerNonce": "4fe026fb-2dca-4239-9176-5c194fad8adc",
+        "phase": "terminal",
+        "deadlineAt": "2026-11-07T06:24:24.896Z"
+      },
+      "lastOutcomeCode": "completed",
+      "completedAt": "2026-11-07T06:24:16.528Z"
+    }
+  },
+  "owner": null,
+  "phase": "complete",
+  "recoverableFailure": {
+    "reason": "actions-settled",
+    "releasedAt": "2026-11-07T06:24:16.554Z",
+    "ownerNonce": "7768e4ef-a03b-479a-babe-cea0c934575e"
+  },
+  "completion": {
+    "completedAt": "2026-11-07T06:24:16.554Z",
+    "terminalDigest": "1f59d853c8a1433376ad4d4f8559749e4d39a7194cd0cebbcf3cc16cf55e0b19",
+    "terminalRevision": 60
+  }
+}

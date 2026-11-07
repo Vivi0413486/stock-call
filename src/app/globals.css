@@ -1,26 +1,114 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0b0f1a;
+  --bg-2: #121a2b;
+  --panel: #161f33;
+  --line: #273352;
+  --fg: #eef2ff;
+  --muted: #8b96b5;
+  --accent: #ffd166; /* 전화벨·강조 */
+  --accent-ink: #1a1400;
+  --green: #22c55e;
+  --red: #ef4444;
+  --up: #f04452; /* 한국 증시: 상승 빨강 */
+  --down: #3182f6; /* 하락 파랑 */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-panel: var(--panel);
+  --color-line: var(--line);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-green: var(--green);
+  --color-red: var(--red);
+  --color-up: var(--up);
+  --color-down: var(--down);
+  --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
+  --font-mono: "SF Mono", ui-monospace, Menlo, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: radial-gradient(1200px 600px at 50% -10%, #1b2742 0%, var(--bg) 60%);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
+
+/* 전화 올 때 아바타가 흔들린다 */
+@keyframes ring-shake {
+  0%, 100% { transform: rotate(0); }
+  10% { transform: rotate(-8deg); }
+  20% { transform: rotate(8deg); }
+  30% { transform: rotate(-6deg); }
+  40% { transform: rotate(6deg); }
+  50% { transform: rotate(0); }
+}
+.ring-shake { animation: ring-shake 1.2s ease-in-out infinite; transform-origin: 50% 20%; }
+
+/* 벨 울릴 때 바깥으로 퍼지는 링 */
+@keyframes ripple {
+  0% { transform: scale(1); opacity: 0.55; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+.ripple::before,
+.ripple::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 2px solid var(--accent);
+  animation: ripple 1.6s ease-out infinite;
+}
+.ripple::after { animation-delay: 0.8s; }
+
+/* 말할 때 숨쉬듯 커졌다 작아진다 */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 209, 102, 0.35); }
+  50% { transform: scale(1.06); box-shadow: 0 0 0 18px rgba(255, 209, 102, 0); }
+}
+.speaking { animation: breathe 1.1s ease-in-out infinite; }
+
+/* 듣는 중 — 느리게 */
+@keyframes listen {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.3); }
+  50% { box-shadow: 0 0 0 12px rgba(34, 197, 94, 0); }
+}
+.listening { animation: listen 2s ease-in-out infinite; }
+
+/* 자막·카드 등장 */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.25s ease-out both; }
+
+/* 음성 파형 막대 */
+@keyframes bar {
+  0%, 100% { height: 20%; }
+  50% { height: 100%; }
+}
+.wave span {
+  display: inline-block;
+  width: 4px;
+  height: 20%;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: bar 0.9s ease-in-out infinite;
+}
+.wave span:nth-child(2) { animation-delay: 0.15s; }
+.wave span:nth-child(3) { animation-delay: 0.3s; }
+.wave span:nth-child(4) { animation-delay: 0.45s; }
+.wave span:nth-child(5) { animation-delay: 0.6s; }
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
