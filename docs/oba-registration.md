@@ -45,11 +45,11 @@ Next.js 16 · TypeScript · Tailwind CSS 4 · Zod · Phoenix AI DATA API · Vapi
 
 ## GitHub
 
-(푸시 후 URL 기입)
+https://github.com/Vivi0413486/stock-call
 
 ## 데모 URL
 
-로컬 시연 (Vapi 분당 과금·Phoenix 행사 키 보호를 위해 공개 배포하지 않음)
+https://stock-call-lime.vercel.app (Vercel. 마이크 허용 후 통화. 통화 1회 2분 상한)
 
 ## 발표자료
 

@@ -1,7 +1,7 @@
 # 무대 시연 대본 (2분 30초)
 
 사전 체크 (무대 오르기 전)
-- [ ] `pnpm dev -p 3188` 떠 있고 터미널에서 `curl -s localhost:3188/api/health` 결과가 `"mode":"live"` · `"vapi":true`
+- [ ] 1순위 https://stock-call-lime.vercel.app (배포본) · 2순위 로컬 `pnpm dev -p 3188`. `curl -s https://stock-call-lime.vercel.app/api/health` 가 `"mode":"live"` · `"vapi":true`
 - [ ] 브라우저 마이크 권한 허용됨 (주소창 자물쇠 → 마이크 허용). 블루투스 이어폰 말고 **노트북 마이크 + 외부 스피커**
 - [ ] 소리 크기: 벨소리 → 캐릭터 목소리 순서로 한 번 들어보기 (기본 MiniMax 한국어 보이스·속도 1.15배. 바꾸려면 URL `?voice=Korean_CockyGuy` `?speed=1.4` `?tts=cartesia`)
 - [ ] 삼성전자 평단 210,000원 × 10주 미리 저장 (브라우저에 남음) → 수익률 -10% 대사 보장
