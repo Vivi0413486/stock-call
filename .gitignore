@@ -42,3 +42,7 @@ next-env.d.ts
 
 # 값 없는 공개 템플릿은 커밋한다
 !.env.example
+
+# OMC 운영 상태 (커밋 금지, skills만 예외)
+.omc/*
+!.omc/skills/
