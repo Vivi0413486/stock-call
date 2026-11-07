@@ -18,9 +18,12 @@ export function resolveTtsChoice(raw: string | undefined): TtsChoice {
   return (TTS_CHOICES as readonly string[]).includes(v) ? (v as TtsChoice) : "minimax";
 }
 
-export function buildVoice(choice: TtsChoice, persona: Persona, mood: MoodInfo, voiceIdOverride?: string, modelOverride?: string): Voice {
+export function buildVoice(choice: TtsChoice, persona: Persona, mood: MoodInfo, voiceIdOverride?: string, modelOverride?: string, speedOverride?: string): Voice {
   const override = voiceIdOverride?.trim() || undefined;
   const model = modelOverride?.trim() || undefined;
+  // 말하기 속도. 기본은 조금 빠르게(전화 수다 느낌). ?speed=1.3 처럼 덮어쓴다. 성장주는 더 빠르게
+  const parsed = Number(speedOverride);
+  const speed = Number.isFinite(parsed) && parsed > 0 ? parsed : persona.kind === "growth" ? 1.25 : 1.15;
   switch (choice) {
     case "minimax": {
       // MiniMax speech-02-hd 한국어 시스템 보이스(platform.minimax.io/docs/faq/system-voice-id, 49종).
@@ -31,6 +34,8 @@ export function buildVoice(choice: TtsChoice, persona: Persona, mood: MoodInfo, 
         model: (model ?? "speech-02-hd") as "speech-02-hd" | "speech-02-turbo",
         voiceId: override ?? (persona.kind === "growth" ? "Korean_CheerfulCoolJunior" : "Korean_CheerfulBoyfriend"),
         emotion: emotion[mood.mood],
+        speed,
+        languageBoost: "Korean",
       };
     }
     case "cartesia":
@@ -43,7 +48,7 @@ export function buildVoice(choice: TtsChoice, persona: Persona, mood: MoodInfo, 
       };
     case "azure":
       // Azure 한국어 신경망 음성. InJoon(남) · SunHi(여) · Hyunsu(남) 등 이름은 Azure 문서 기준
-      return { provider: "azure", voiceId: override ?? "ko-KR-InJoonNeural", speed: 1.1 };
+      return { provider: "azure", voiceId: override ?? "ko-KR-InJoonNeural", speed };
     case "11labs":
       // model: eleven_flash_v2_5(빠름) · eleven_multilingual_v2(품질) · eleven_v3(표현력). language 강제는 flash v2.5만 허용
       {
@@ -59,7 +64,7 @@ export function buildVoice(choice: TtsChoice, persona: Persona, mood: MoodInfo, 
         provider: "openai",
         model: (model ?? "gpt-4o-mini-tts") as "gpt-4o-mini-tts" | "tts-1" | "tts-1-hd",
         voiceId: override ?? "ash",
-        speed: 1.05,
+        speed,
         instructions: `한국어 원어민. 20대 ${persona.kind === "growth" ? "하이텐션 막내" : "듬직한 척하는 동생"}가 가족한테 전화로 수다 떠는 말투. 지금 기분: ${mood.label} — ${mood.direction} 감정을 과장해서 연기하되 발음은 또렷하게. 숫자는 한국어로 읽는다.`,
       };
   }

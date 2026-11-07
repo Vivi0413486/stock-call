@@ -45,6 +45,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
   const ttsChoice = resolveTtsChoice(query?.get("tts") ?? process.env.NEXT_PUBLIC_VAPI_TTS);
   const voiceOverride = query?.get("voice") ?? process.env.NEXT_PUBLIC_VAPI_VOICE_ID ?? undefined;
   const modelOverride = query?.get("model") ?? process.env.NEXT_PUBLIC_VAPI_TTS_MODEL ?? undefined;
+  const speedOverride = query?.get("speed") ?? process.env.NEXT_PUBLIC_VAPI_TTS_SPEED ?? undefined;
   const [state, setState] = useState<CallState>("connecting");
   const [avatar, setAvatar] = useState<AvatarState>("idle");
   const [lines, setLines] = useState<Line[]>([]);
@@ -250,7 +251,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
             temperature: 0.8,
             messages: [{ role: "system", content: script.systemPrompt }],
           },
-          voice: buildVoice(ttsChoice, script.persona, script.mood, voiceOverride, modelOverride),
+          voice: buildVoice(ttsChoice, script.persona, script.mood, voiceOverride, modelOverride, speedOverride),
           maxDurationSeconds: MAX_CALL_SECONDS,
           endCallPhrases: [END_PHRASE],
         };
@@ -265,7 +266,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
     } finally {
       startingRef.current = false;
     }
-  }, [brief.name, honorific, script, sttChoice, ttsChoice, voiceOverride, modelOverride, teardown, finalize, hangUp, pushLine]);
+  }, [brief.name, honorific, script, sttChoice, ttsChoice, voiceOverride, modelOverride, speedOverride, teardown, finalize, hangUp, pushLine]);
 
   /** 연결 중 취소: start가 끝나길 기다렸다가 stop (SDK가 preflight 취소를 지원) */
   const cancelConnecting = useCallback(async () => {
@@ -334,7 +335,7 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
             {fmtAsOf(p.asOf, p.marketStatus)}
             {brief.source.quote === "sample" && " · 샘플 데이터"}
             {brief.source.quote === "phoenix" && " · Phoenix AI"}
-            {mode === "voice" && ` · STT ${sttChoice} · TTS ${ttsChoice}${voiceOverride ? `/${voiceOverride}` : ""}${modelOverride ? `/${modelOverride}` : ""}`}
+            {mode === "voice" && ` · STT ${sttChoice} · TTS ${ttsChoice}${voiceOverride ? `/${voiceOverride}` : ""}${modelOverride ? `/${modelOverride}` : ""}${speedOverride ? ` ×${speedOverride}` : ""}`}
           </p>
         )}
       </div>
