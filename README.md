@@ -54,6 +54,8 @@ pnpm test        # node:test — openapi.json 공식 예제가 Zod 스키마를 
 pnpm build
 ```
 
+마이크 없이 대화를 검증하려면(개발 모드 전용) 브라우저 콘솔에서 `window.__vapi.send({type:"add-message",message:{role:"user",content:"응, 뭔데?"}})` 로 발화를 주입할 수 있습니다. 헤드리스 Chrome은 `--use-fake-ui-for-media-stream --use-fake-device-for-media-stream` 플래그로 통화가 연결됩니다.
+
 테스트는 기본적으로 openapi.json 을 내려받습니다. 오프라인이면 `OPENAPI_JSON=/path/to/openapi.json pnpm test`.
 
 ## 비용·한도 보호

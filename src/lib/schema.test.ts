@@ -10,6 +10,7 @@ import { DisclosuresResponse, FinancialsResponse, KeyResponse, QuoteResponse, Sy
 import { moodFromChange, computePnl, toPercent } from "./mood";
 import { buildScript, dayWord, END_PHRASE, josa, spokenDate, spokenPeriod } from "./prompt";
 import { sampleBrief } from "./sample";
+import { tidyTitle } from "./format";
 
 type Spec = { paths: Record<string, { get: { responses: Record<string, { content?: Record<string, { example?: unknown; examples?: Record<string, { value: unknown }> }> }> } }> };
 
@@ -117,6 +118,10 @@ test("조사·날짜·기간 읽기", () => {
   assert.equal(spokenDate("2026-11-05"), "십일월 오일");
   assert.equal(spokenPeriod("2026 3분기"), "이천이십육년 삼분기");
   assert.equal(spokenPeriod("2025 연간"), "이천이십오년 연간");
+});
+
+test("공시 제목 정리", () => {
+  assert.equal(tidyTitle("[기재정정] 임원ㆍ주요주주특정증권등소유상황보고서"), "임원 주요주주특정증권등소유상황보고서");
 });
 
 test("기준 시각 표현", () => {

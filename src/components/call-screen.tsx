@@ -177,6 +177,8 @@ export function CallScreen({ brief, script, honorific, onEnd }: Props) {
       const { default: VapiCtor } = await import("@vapi-ai/web");
       const vapi = new VapiCtor(publicKey);
       vapiRef.current = vapi;
+      // 개발 모드 전용: 마이크 없는 자동 테스트가 add-message로 발화를 주입할 수 있게 노출
+      if (process.env.NODE_ENV === "development") (window as unknown as { __vapi?: Vapi }).__vapi = vapi;
 
       vapi.on("call-start", () => {
         liveRef.current = true;

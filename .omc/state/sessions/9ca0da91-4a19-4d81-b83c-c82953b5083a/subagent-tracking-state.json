@@ -8,10 +8,21 @@
       "status": "completed",
       "completed_at": "2026-11-07T06:47:01.466Z",
       "duration_ms": 310287
+    },
+    {
+      "agent_id": "a6eff15ce59bd6560",
+      "agent_type": "untracked-native-fork",
+      "started_at": "2026-11-07T06:50:36.915Z",
+      "parent_mode": "none",
+      "status": "completed",
+      "completed_at": "2026-11-07T06:50:36.915Z",
+      "synthetic": true,
+      "telemetry_status": "unmatched_stop",
+      "telemetry_note": "SubagentStop arrived without a matching SubagentStart; native Agent/Task start telemetry was not observed."
     }
   ],
   "total_spawned": 1,
-  "total_completed": 2,
+  "total_completed": 3,
   "total_failed": 0,
-  "last_updated": "2026-11-07T06:47:01.469Z"
+  "last_updated": "2026-11-07T06:50:36.918Z"
 }

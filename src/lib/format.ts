@@ -55,5 +55,6 @@ export function fmtEok(value: number, unit: string): string {
 
 /** 공시 제목에서 캐릭터가 읽기 좋게 군더더기를 뺀다 */
 export function tidyTitle(title: string): string {
-  return title.replace(/^\[.*?\]\s*/g, "").replace(/\s+/g, " ").trim();
+  // 가운뎃점(ㆍ·)은 TTS가 엉뚱하게 읽으므로 공백으로 (실측: "임원ㆍ주요주주" → "임원우주요 주주")
+  return title.replace(/^\[.*?\]\s*/g, "").replace(/[ㆍ·]/g, " ").replace(/\s+/g, " ").trim();
 }
