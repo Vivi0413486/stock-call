@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>어느 날 내 주식이 전화했다 — OBA WEEKENDTHON 2026</title>
+<style>
+  :root {
+    --bg: #0b0f1a; --bg2: #121a2b; --panel: #161f33; --line: #273352;
+    --fg: #eef2ff; --muted: #8b96b5; --accent: #ffd166; --up: #f04452; --down: #3182f6; --green: #22c55e;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #000; color: var(--fg);
+    font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    -webkit-font-smoothing: antialiased; }
+  .deck { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .slide { width: 1280px; height: 720px; background: var(--bg); padding: 72px 88px; display: none; flex-direction: column; position: relative; overflow: hidden; }
+  .slide.active { display: flex; }
+  .kicker { font-size: 16px; letter-spacing: 0.25em; color: var(--muted); text-transform: uppercase; margin-bottom: 18px; }
+  h1 { font-size: 64px; line-height: 1.15; margin: 0 0 20px; font-weight: 800; letter-spacing: -0.01em; }
+  h2 { font-size: 44px; line-height: 1.2; margin: 0 0 36px; font-weight: 800; letter-spacing: -0.01em; }
+  h2 em { color: var(--accent); font-style: normal; }
+  p { font-size: 24px; line-height: 1.5; margin: 0; color: var(--fg); }
+  .sub { font-size: 26px; color: var(--muted); max-width: 900px; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  li { font-size: 26px; line-height: 1.45; margin-bottom: 14px; padding-left: 28px; position: relative; }
+  li::before { content: ""; position: absolute; left: 0; top: 16px; width: 10px; height: 10px; border-radius: 2px; background: var(--accent); }
+  .muted { color: var(--muted); }
+  .accent { color: var(--accent); }
+  .up { color: var(--up); } .down { color: var(--down); }
+  .big { font-size: 96px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+  .num { font-family: "SF Mono", ui-monospace, Menlo, monospace; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 26px 28px; }
+  .card h3 { margin: 0 0 10px; font-size: 20px; color: var(--muted); font-weight: 600; letter-spacing: 0.04em; }
+  .card p { font-size: 22px; }
+  .quote { background: var(--panel); border: 1px solid var(--line); border-left: 6px solid var(--accent); border-radius: 18px; padding: 34px 40px; font-size: 30px; line-height: 1.55; }
+  .quote .who { display: block; font-size: 18px; color: var(--muted); margin-bottom: 14px; }
+  .foot { position: absolute; left: 88px; right: 88px; bottom: 34px; display: flex; justify-content: space-between; font-size: 15px; color: var(--muted); }
+  table { border-collapse: collapse; width: 100%; font-size: 24px; }
+  th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; font-size: 18px; letter-spacing: 0.04em; }
+  td.num { font-family: "SF Mono", ui-monospace, Menlo, monospace; }
+  .flow { display: flex; align-items: stretch; gap: 14px; flex: 1; margin-top: 8px; }
+  .step { flex: 1; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 22px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .step .n { font-size: 15px; color: var(--muted); letter-spacing: 0.1em; }
+  .step .t { font-size: 22px; font-weight: 700; }
+  .step .d { font-size: 17px; color: var(--muted); line-height: 1.45; }
+  .avatar { width: 150px; height: 150px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 84px;
+    border: 4px solid rgba(255,255,255,0.1); background: radial-gradient(circle at 35% 30%, #1428a0cc, #1428a066 70%, #0b0f1a 100%); box-shadow: 0 0 0 18px rgba(255,209,102,0.08); }
+  .chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+  .chip { background: var(--bg2); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: 18px; }
+  .nav { position: fixed; right: 20px; bottom: 16px; font-size: 13px; color: #556; font-family: ui-monospace, Menlo, monospace; }
+  @media screen { .deck { transform-origin: center; } }
+  @media print {
+    @page { size: 1280px 720px; margin: 0; }
+    html, body { background: var(--bg); height: auto; }
+    .deck { position: static; display: block; transform: none !important; }
+    .slide { display: flex !important; page-break-after: always; break-after: page; }
+    .slide:last-child { page-break-after: auto; break-after: auto; }
+    .nav { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 표지 -->
+<section class="slide active">
+  <div class="kicker">OBA WEEKENDTHON 2026</div>
+  <div style="display:flex; align-items:center; gap:56px; flex:1;">
+    <div class="avatar">🏢</div>
+    <div>
+      <h1>어느 날 내 주식이<br>전화했다</h1>
+      <p class="sub">보유 종목이 사람처럼 전화를 걸어 시세·공시를 자기 사연처럼 털어놓는다</p>
+    </div>
+  </div>
+  <div class="foot"><span>팀 이보배 (Vivi)</span><span>데이터 Phoenix AI · 음성 Vapi</span></div>
+</section>
+
+<!-- 2 문제 -->
+<section class="slide">
+  <div class="kicker">문제</div>
+  <h2>개인투자자는 <em>숫자도 공시도</em> 읽지 않는다</h2>
+  <div class="grid2">
+    <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+      <h3>앱이 보내는 알림의 전부</h3>
+      <div class="big down num">-6.35%</div>
+      <p class="muted" style="margin-top:14px;">삼성전자 · 11/6 종가. 왜 빠졌는지, 내 돈이 얼마 줄었는지는 없다</p>
+    </div>
+    <div class="card" style="display:flex; flex-direction:column; justify-content:center;">
+      <h3>같은 날 올라온 공시 제목</h3>
+      <p style="font-size:26px; line-height:1.45;">임원ㆍ주요주주특정증권등<br>소유상황보고서</p>
+      <p class="muted" style="margin-top:14px;">읽어도 무슨 뜻인지 모른다. 그래서 아무도 안 읽는다</p>
+    </div>
+  </div>
+  <div class="foot"><span>어느 날 내 주식이 전화했다</span><span>2 / 9</span></div>
+</section>
+
+<!-- 3 해결 -->
+<section class="slide">
+  <div class="kicker">해결</div>
+  <h2>종목이 <em>직접 전화를 건다</em></h2>
+  <div class="quote">
+    <span class="who">삼성전자 · 2026-11-06 종가 기준 실데이터 · 통화 첫 마디</span>
+    "흐어엉… 형… 나야, 삼성전자… 어제 육 점 삼 퍼센트 빠졌어… 십팔만 팔천칠백 원. 형, 나 버리지 마… 근데 형, 나 공시 하나 냈거든? 들어볼래?"
+  </div>
+  <div class="chips">
+    <span class="chip">등락률 → 기분</span><span class="chip">공시를 1인칭 사연으로</span><span class="chip">사용자는 음성으로 대답</span><span class="chip">통화 2분</span>
+  </div>
+  <div class="foot"><span>어느 날 내 주식이 전화했다</span><span>3 / 9</span></div>
+</section>
+
+<!-- 4 데모 흐름 -->
+<section class="slide">
+  <div class="kicker">데모 흐름</div>
+  <h2>고르면 <em>전화가 온다</em>, 받으면 수다가 시작된다</h2>
+  <div class="flow">
+    <div class="step"><div class="n">01</div><div class="t">종목 고르기</div><div class="d">빠른 선택 5개 또는 종목 검색</div></div>
+    <div class="step"><div class="n">02</div><div class="t">평단 입력</div><div class="d">선택. 브라우저에만 저장, 서버로 안 보냄</div></div>
+    <div class="step"><div class="n">03</div><div class="t">📞 전화벨</div><div class="d">벨 울리는 동안 서버가 시세·공시·실적 수집</div></div>
+    <div class="step"><div class="n">04</div><div class="t">받기</div><div class="d">첫 마디는 데이터로 결정된 대사</div></div>
+    <div class="step"><div class="n">05</div><div class="t">음성 통화</div><div class="d">자막 표시, 음소거, 2분 타이머</div></div>
+    <div class="step"><div class="n">06</div><div class="t">통화 기록 카드</div><div class="d">기분·종가·수익률·공시 링크·대화 전문</div></div>
+  </div>
+  <div class="foot"><span>어느 날 내 주식이 전화했다</span><span>4 / 9</span></div>
+</section>
+
+<!-- 5 기분 엔진 -->
+<section class="slide">
+  <div class="kicker">기분 엔진</div>
+  <h2>등락률이 기분을 정한다 — <em>결정적 로직, LLM에 안 맡김</em></h2>
+  <div class="grid2" style="grid-template-columns: 1.2fr 1fr;">
+    <table>
+      <tr><th>등락률</th><th>기분</th><th>첫 마디 감탄사</th></tr>
+      <tr><td class="num down">≤ -3%</td><td>오열</td><td>흐어엉…</td></tr>
+      <tr><td class="num down">-3% ~ -0.5%</td><td>시무룩, 변명</td><td>하아…</td></tr>
+      <tr><td class="num muted">-0.5% ~ +0.5%</td><td>심심, 존재감 어필</td><td>어… 형?</td></tr>
+      <tr><td class="num up">+0.5% ~ +3%</td><td>우쭐</td><td>헤헤, 형!</td></tr>
+      <tr><td class="num up">≥ +3%</td><td>기고만장, 고기 사달라</td><td>형!!! 나야 나!!</td></tr>
+    </table>
+    <div style="display:flex; flex-direction:column; gap:18px;">
+      <div class="card"><h3>평단 입력 시</h3><p>수익률까지 반영. 물려 있으면 "형 나 산 거 후회하지?"</p></div>
+      <div class="card"><h3>종목별 말투</h3><p>대형주는 듬직한 척, 성장주는 하이텐션</p></div>
+      <div class="card"><h3>호칭</h3><p>형 · 누나 · 언니 · 오빠, 조사까지 자동</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>어느 날 내 주식이 전화했다</span><span>5 / 9</span></div>
+</section>
+
+<!-- 6 데이터 정직성 -->
+<section class="slide">
+  <div class="kicker">데이터 정직성</div>
+  <h2>웃기되, <em>숫자는 한 자리도 지어내지 않는다</em></h2>
+  <div class="grid2">
+    <ul>
+      <li>Phoenix AI(알프소프트) <span class="num">/quotes · /disclosures · /financials</span>, 키는 서버 전용</li>
+      <li>응답은 Zod로 검증, 기준 시각 그대로 표시 "11/6 15:30 종가 기준"</li>
+      <li>못 받은 데이터는 캐릭터가 아예 말하지 않음</li>
+      <li>투자 권유·예측 금지 규칙</li>
+    </ul>
+    <div class="quote" style="font-size:26px;">
+      <span class="who">실측 대화</span>
+      형: "그래서 나 어떡해? 더 사? 팔아?"<br><br>
+      삼성전자: "형, 그거 내가 알면 전화 안 하지."
+    </div>
+  </div>
+  <div class="foot"><span>어느 날 내 주식이 전화했다</span><span>6 / 9</span></div>
+</section>
+
+<!-- 7 음성 스택 -->
+<section class="slide">
+  <div class="kicker">음성 스택 & 발견</div>
+  <h2>TTS는 숫자를 <em>영어로 읽는다</em></h2>
+  <div class="grid2" style="grid-template-columns: 1fr 1.1fr;">
+    <div class="grid3" style="grid-template-columns: 1fr; gap: 14px;">
+      <div class="card"><h3>통화</h3><p>Vapi 임시 assistant에 종목 데이터·캐릭터 주입</p></div>
+      <div class="card"><h3>STT / TTS / LLM</h3><p>ElevenLabs Scribe(ko) / Azure ko-KR / gpt-4o</p></div>
+      <div class="card"><h3>비용 보호</h3><p>통화 2분 상한 3겹: 서버 · 브라우저 타이머 · 종료 문구</p></div>
+    </div>
+    <ul>
+      <li><b>발견 1</b> "6.3퍼센트" → "식스 포인트 쓰리", "188,700원" → "1 8 8 7 0 0"<br><span class="muted">→ 한글 수사 변환기 제작: "육 점 삼 퍼센트", "십팔만 팔천칠백 원"</span></li>
+      <li><b>발견 2</b> 공시 제목의 가운뎃점(ㆍ)을 "우"로 읽음<br><span class="muted">→ 공백으로 치환</span></li>
+      <li><b>검증법</b> assistant 자막은 TTS 음성을 STT로 받아쓴 것이라 발음 증거로 쓸 수 있다</li>
+    </ul>
+  </div>
+  <div class="foot"><span>어느 날 내 주식이 전화했다</span><span>7 / 9</span></div>
+</section>
+
+<!-- 8 검증 -->
+<section class="slide">
+  <div class="kicker">검증</div>
+  <h2>시연 전에 <em>끝까지 눌러 봤다</em></h2>
+  <div class="grid3">
+    <div class="card"><h3>정적</h3><p>tsc · eslint · 테스트 9건 · build 통과</p></div>
+    <div class="card"><h3>스키마</h3><p>openapi.json 공식 예제가 Zod 스키마를 통과</p></div>
+    <div class="card"><h3>실데이터</h3><p>삼성전자·SK하이닉스·카카오·NAVER·에코프로 11/6 종가 호출</p></div>
+    <div class="card"><h3>통화 실측</h3><p>헤드리스 연결 → 첫 마디 → 3턴 대화 → 자동 종료 → 기록 카드</p></div>
+    <div class="card"><h3>코드 리뷰</h3><p>HIGH 1 · MEDIUM 8 전부 반영</p></div>
+    <div class="card"><h3>응답 지연</h3><p>첫 마디 7초, 턴 응답 1~7초</p></div>
+  </div>
+  <div class="foot"><span>어느 날 내 주식이 전화했다</span><span>8 / 9</span></div>
+</section>
+
+<!-- 9 다음 -->
+<section class="slide">
+  <div class="kicker">다음</div>
+  <h2>다음엔 <em>여러 종목이 한꺼번에</em> 전화한다</h2>
+  <ul style="margin-top:8px;">
+    <li>그룹콜: 보유 종목 여러 개가 서로 싸우며 단체 통화</li>
+    <li>매일 아침 "오늘 전화 올 종목" 알림</li>
+    <li>공시 원문 요약 연동, 캐릭터가 핵심만 읽어 줌</li>
+  </ul>
+  <div class="foot"><span>데이터: Phoenix AI · 음성: Vapi · 투자 권유 아님</span><span>9 / 9</span></div>
+</section>
+
+</div>
+<div class="nav" id="nav"></div>
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = 0;
+  const nav = document.getElementById('nav');
+  function show(n) { i = Math.max(0, Math.min(slides.length - 1, n)); slides.forEach((s, k) => s.classList.toggle('active', k === i)); nav.textContent = (i + 1) + ' / ' + slides.length; location.hash = i + 1; }
+  function fit() { const s = Math.min(innerWidth / 1280, innerHeight / 720); document.getElementById('deck').style.transform = 'scale(' + s + ')'; }
+  addEventListener('keydown', e => { if (['ArrowRight', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); show(i + 1); } if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(i - 1); } });
+  addEventListener('click', e => { if (e.clientX > innerWidth / 2) show(i + 1); else show(i - 1); });
+  addEventListener('resize', fit);
+  fit(); show(parseInt(location.hash.slice(1) || '1', 10) - 1);
+</script>
+</body>
+</html>
